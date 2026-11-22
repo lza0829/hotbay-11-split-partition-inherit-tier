@@ -48,7 +48,7 @@ def create_partition(part_key: str, title: str, release_day: str, vault_id: int,
                 (pid, ok, int(clip["bytes"]), clip.get("entered_day") or release_day, clip.get("note") or ""),
             )
             conn.execute(
-                "INSERT OR REPLACE INTO inventory_objects(object_key, bytes, vault_name, scanned_at) VALUES (?,?,?,?)",
-                (ok, int(clip["bytes"]), v["name"], now()),
+                "INSERT OR REPLACE INTO inventory_objects(object_key, bytes, vault_name, scanned_at, owner_partition_id) VALUES (?,?,?,?,?)",
+                (ok, int(clip["bytes"]), v["name"], now(), pid),
             )
         return {"id": pid, "part_key": part_key, "tier": tier}

@@ -28,6 +28,18 @@ def run_verify():
         size_drift = sorted(
             k for k in set(meta_keys) & set(inv_keys) if meta_keys[k] != inv_keys[k]
         )
+        # 归属互证：目录行归属分区须与素材段所在分区一致，且不得双挂。
+        owner_drift = sorted(
+            r["object_key"]
+            for r in conn.execute(
+                '''SELECT i.object_key,
+                          i.owner_partition_id AS owner,
+                          (SELECT c.partition_id FROM clips c WHERE c.object_key=i.object_key) AS actual,
+                          (SELECT COUNT(*) FROM clips c WHERE c.object_key=i.object_key) AS n
+                   FROM inventory_objects i'''
+            ).fetchall()
+            if r["n"] > 1 or (r["n"] == 1 and r["owner"] is not None and r["owner"] != r["actual"])
+        )
         drifts = []
         for k in only_meta:
             drifts.append({"对象键": k, "问题": "元数据有、目录无"})
@@ -35,6 +47,8 @@ def run_verify():
             drifts.append({"对象键": k, "问题": "目录有、元数据无"})
         for k in size_drift:
             drifts.append({"对象键": k, "问题": "字节不一致"})
+        for k in owner_drift:
+            drifts.append({"对象键": k, "问题": "归属不一致或键双挂"})
         status = "一致" if not drifts else "漂移"
         cur = conn.execute(
             "INSERT INTO verify_runs(status, drift_count, detail, created_at) VALUES (?,?,?,?)",

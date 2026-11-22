@@ -49,6 +49,12 @@ def run_retention(policy_id: int, mode: str = "连目录销毁"):
             if mode == "连目录销毁":
                 for c in clips:
                     conn.execute("DELETE FROM inventory_objects WHERE object_key=?", (c["object_key"],))
+            else:
+                for c in clips:
+                    conn.execute(
+                        "UPDATE inventory_objects SET owner_partition_id=NULL WHERE object_key=?",
+                        (c["object_key"],),
+                    )
             conn.execute("DELETE FROM clips WHERE partition_id=?", (p["id"],))
             conn.execute("UPDATE partitions SET status='已销毁' WHERE id=?", (p["id"],))
             cur = conn.execute(

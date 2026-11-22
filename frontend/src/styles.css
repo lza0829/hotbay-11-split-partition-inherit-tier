@@ -116,6 +116,9 @@ body {
 .form { display: grid; gap: 10px; }
 .form.row { grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); align-items: end; }
 label { display: flex; flex-direction: column; gap: 6px; font-size: .9rem; color: var(--muted); }
+label.check { flex-direction: row; align-items: center; gap: 8px; color: var(--ink, #e8dce0); font-size: .85rem; }
+fieldset.panel { border: 1px dashed #5a3040; }
+fieldset.panel legend { color: var(--muted); font-size: .85rem; padding: 0 6px; }
 input, select, button {
   font: inherit;
   padding: 10px 12px;

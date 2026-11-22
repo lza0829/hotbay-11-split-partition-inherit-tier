@@ -9,7 +9,8 @@ export default function Home() {
   if (!o) return <p className="muted">加载总览…</p>
   const cards = [
     ['热档', o.热档], ['温档', o.温档], ['冷档', o.冷档],
-    ['迁移执行中', o.迁移执行中], ['待销毁候选', o.待销毁候选], ['目录对象', o.目录对象],
+    ['在册合计', o.在册合计], ['迁移执行中', o.迁移执行中], ['待销毁候选', o.待销毁候选],
+    ['已拆', o.已拆], ['拆号回执', o.拆号回执], ['目录对象', o.目录对象],
   ]
   return (
     <div className="page">

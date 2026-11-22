@@ -1,6 +1,6 @@
 from __future__ import annotations
 from fastapi import HTTPException
-from app.db import db
+from app.db import db, write_db
 from app.services.core import can_migrate, now, partition_row, require_tier
 
 
@@ -15,7 +15,7 @@ def list_jobs():
 
 def start_migrate(partition_id: int, to_tier: str):
     to_tier = require_tier(to_tier)
-    with db() as conn:
+    with write_db() as conn:
         p = partition_row(conn, partition_id)
         if p["status"] != "在册":
             raise HTTPException(400, detail="仅在册分区可迁移")
@@ -35,7 +35,7 @@ def start_migrate(partition_id: int, to_tier: str):
 
 
 def finish_migrate(job_id: int, success: bool = True):
-    with db() as conn:
+    with write_db() as conn:
         j = conn.execute("SELECT * FROM migrate_jobs WHERE id=?", (job_id,)).fetchone()
         if not j:
             raise HTTPException(404, detail="迁移单不存在")

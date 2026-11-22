@@ -44,12 +44,13 @@ def seed_if_empty() -> None:
                     (pid, ok, 8_000_000 + i * 120_000, day, label),
                 )
                 conn.execute(
-                    "INSERT INTO inventory_objects(object_key, bytes, vault_name, scanned_at) VALUES (?,?,?,?)",
+                    "INSERT INTO inventory_objects(object_key, bytes, vault_name, scanned_at, owner_partition_id) VALUES (?,?,?,?,?)",
                     (
                         ok,
                         8_000_000 + i * 120_000,
                         {1: "主厅成片间", 2: "宣发快取间", 3: "冷库片窖"}[vid],
                         f"{today.isoformat()}T09:00:00",
+                        pid,
                     ),
                 )
         conn.execute(
